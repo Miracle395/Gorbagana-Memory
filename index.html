@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Memorize With Gorbagana </title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      background: linear-gradient(to bottom, #fe6c07, #fe6c07);
+      overflow: hidden;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 60px;
+      height: 100vh;
+    }
+
+    nav {
+      width: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+      background: #010101;
+      padding: 10px 20px;
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid #fe6c07;
+      box-shadow: 0 3px 6px rgba(254, 108, 7, 0.3);
+    }
+
+    nav .title {
+      flex: 1;
+      text-align: center;
+      color: #fe6c07;
+      font-size: 19px;
+      font-family: 'Times New Roman', serif;
+      text-shadow: 1px 1px 3px rgba(254, 108, 7, 0.4);
+    }
+
+    nav img {
+      height: 55px;
+      width: 55px;
+      border-radius: 50%;
+      border: 2px solid #fe6c07;
+      background: #fff;
+      object-fit: contain;
+    }
+
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(4, 140px);
+      gap: 10px;
+    }
+
+    .card {
+      position: relative;
+      width: 100px;
+      height: 140px;
+      perspective: 1000px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      backface-visibility: hidden;
+    }
+
+    .card-front {
+      background: #444;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      z-index: 9999;
+      color: white;
+      font-size: 1em;
+      animation: fall linear infinite;
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(100vh); }
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: 'Times New Roman', serif;
+      font-size: 22px;
+      flex-direction: column;
+      z-index: 2000;
+      display: none;
+    }
+
+    .modal button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background-color: #fe6c07;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .modal button:hover {
+      background-color: #e55a00;
+    }
+
+    #toggleMusic {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      background: #010101;
+      color: #fe6c07;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 9999;
+    }
+
+    #startOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000000dd;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      font-family: 'Times New Roman', serif;
+      font-size: 24px;
+      z-index: 3000;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="startOverlay">
+    <p>Tap to Start</p>
+  </div>
+
+  <nav>
+    <img src="gorb.png" alt="Camp Network Logo">
+    <div class="title">MEMORIZE WITH GORBAGANA</div>
+    <div style="width:30px;"></div>
+  </nav>
+
+  <div class="wrapper">
+    <div class="game-board" id="gameBoard"></div>
+  </div>
+
+  <div style="font-family: times new roman;" class="modal" id="modal">
+    <div style="text-align: center;">
+      <h2 style="font-size: 28px; margin-bottom: 10px; color: #fe6c07;">Well Done, Camper!</h2>
+      <p style="font-size: 20px; margin-bottom: 20px;">You've successfully matched all the cards.</p>
+      <button style="font-family: times new roman;" onclick="location.reload()">Start New Challenge</button>
+    </div>
+  </div>
+
+  <audio id="bgMusic" loop>
+    <source src="camper.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <button style="font-family: times new roman;" id="toggleMusic">Play Music</button>
+
+  <script>
+    const images = ['gorb1.png','gorb2.png','gorb3.png','gorb4.png','gorb5.png','gorb6.png'];
+    const cards = [...images, ...images].sort(() => 0.5 - Math.random());
+
+    const gameBoard = document.getElementById('gameBoard');
+    const modal = document.getElementById('modal');
+    let firstCard = null;
+    let lock = false;
+    let matchedCount = 0;
+
+    cards.forEach(src => {
+      const card = document.createElement('div');
+      card.classList.add('card');
+      card.innerHTML = `
+        <div class="card-inner">
+          <div class="card-front"></div>
+          <div class="card-back" style="background-image: url('${src}');"></div>
+        </div>
+      `;
+      card.dataset.image = src;
+
+      card.addEventListener('click', () => {
+        if (lock || card.classList.contains('matched') || card === firstCard) return;
+
+        card.classList.add('flipped');
+
+        if (!firstCard) {
+          firstCard = card;
+        } else {
+          if (firstCard.dataset.image === card.dataset.image) {
+            card.classList.add('matched');
+            firstCard.classList.add('matched');
+            firstCard = null;
+            matchedCount += 2;
+
+            if (matchedCount === cards.length) {
+              setTimeout(() => {
+                modal.style.display = 'flex';
+              }, 600);
+            }
+          } else {
+            lock = true;
+            setTimeout(() => {
+              card.classList.remove('flipped');
+              firstCard.classList.remove('flipped');
+              firstCard = null;
+              lock = false;
+            }, 1000);
+          }
+        }
+      });
+
+      gameBoard.appendChild(card);
+    });
+
+    function createSnowflake() {
+      const snowflake = document.createElement('div');
+      snowflake.classList.add('snowflake');
+      snowflake.textContent = '❄';
+      snowflake.style.left = Math.random() * 100 + 'vw';
+      snowflake.style.animationDuration = 3 + Math.random() * 5 + 's';
+      snowflake.style.fontSize = 12 + Math.random() * 16 + 'px';
+      document.body.appendChild(snowflake);
+      setTimeout(() => snowflake.remove(), 8000);
+    }
+
+    setInterval(createSnowflake, 200);
+
+    const bgMusic = document.getElementById('bgMusic');
+    const toggleBtn = document.getElementById('toggleMusic');
+
+    toggleBtn.addEventListener('click', () => {
+      if (bgMusic.paused) {
+        bgMusic.play();
+        toggleBtn.textContent = 'Pause Music';
+      } else {
+        bgMusic.pause();
+        toggleBtn.textContent = 'Play Music';
+      }
+    });
+
+    const startOverlay = document.getElementById('startOverlay');
+
+    startOverlay.addEventListener('click', () => {
+      bgMusic.play().then(() => {
+        toggleBtn.textContent = 'Pause Music';
+      }).catch(err => {
+        console.error("Autoplay failed:", err);
+      });
+
+      startOverlay.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
