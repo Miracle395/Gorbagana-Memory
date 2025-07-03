@@ -51,6 +51,8 @@ Testnet SOL on Gorbagana
 Backpack Wallet installed in your browser
 
 
+
+
 Steps:
 
 1. Clone the repo or download source
@@ -88,7 +90,7 @@ Another player must visit the same link and pay too.
 
 🌍 Online Demo:
 
-🔗 Live Demo: [https://yourdomain.com/gorbagana-game](https://yourdomain.com/gorbagana-game)
+(https://gorbagana-memory.vercel.app)
 
 
 
