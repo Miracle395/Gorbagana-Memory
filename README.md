@@ -25,7 +25,10 @@ Designed with soft snowflake animations, ambient music, and clean card-flip UI.�
 
 
 
-🔗 Gorbagana Integration
+
+
+
+Gorbagana Integration
 
 This game uses:
 
@@ -40,7 +43,10 @@ This game uses:
 
 
 
-🚀 How to Run Locally
+
+
+
+How to Run Locally.
 
 Requirements:
 
